@@ -1,0 +1,5 @@
+.cabecalho-container {
+    background-color: red;
+    display: flex;
+    padding: 20em;
+}
