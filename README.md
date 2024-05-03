@@ -26,7 +26,7 @@ npm install
 Com esse comando, os apps irao rodar em modo de observação, a cada mudança salva no código o app será atualizado automaticamente:
 ```bash
 # watch mode
-$ npm run start:dev
+$ npm start run:dev
 ```
 
 O back end rodará em ```localhost:3000``` e o front em ```localhost:3001```
