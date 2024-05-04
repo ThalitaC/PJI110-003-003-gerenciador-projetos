@@ -1,10 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Projeto } from '../../projetos/entities/projeto.entity';
 import { Cliente } from '../../clientes/entities/cliente.entity';
@@ -18,6 +21,13 @@ export class Tarefa {
   @JoinColumn({ name: 'projeto_id' })
   projeto: Projeto;
 
+  @ManyToOne(() => Cliente, (cliente) => cliente.projetos)
+  @JoinColumn({ name: 'cliente_id' })
+  cliente: Cliente;
+
+  @OneToMany(() => Tarefa, (tarefa) => tarefa.projeto)
+  tarefas: Tarefa[];
+
   @Column({ name: 'tarefa_nome', type: 'varchar', nullable: false })
   nome: string;
 
@@ -27,10 +37,12 @@ export class Tarefa {
   @Column({ name: 'tarefa_semana', type: 'integer', nullable: false })
   semana: number;
 
-  @ManyToOne(() => Cliente, (cliente) => cliente.projetos)
-  @JoinColumn({ name: 'cliente_id' })
-  cliente: Cliente;
+  @CreateDateColumn({ name: 'criado_em' })
+  criadoEm: string;
 
-  @OneToMany(() => Tarefa, (tarefa) => tarefa.projeto)
-  tarefas: Tarefa[];
+  @UpdateDateColumn({ name: 'atualizado_em' })
+  atualizadoEm: string;
+
+  @DeleteDateColumn({ name: 'deletado_em' })
+  deletadoEm: string;
 }
