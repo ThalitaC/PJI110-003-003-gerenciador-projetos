@@ -13,6 +13,10 @@ https://nodejs.org/
 
  - Confira se a versao do node instalada é >= 18 com o comando```node -v```
 ![img.png](img.png)
+
+- ### Instale o Docker
+https://docs.docker.com/get-docker/
+
 ## Instalação
 (repita esse processo na pasta /api e na pasta /interface)
 
