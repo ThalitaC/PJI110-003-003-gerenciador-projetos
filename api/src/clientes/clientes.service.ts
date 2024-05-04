@@ -8,8 +8,8 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 @Injectable()
 export class ClientesService {
   constructor(
-      @InjectRepository(Cliente)
-      private readonly clienteRepository: Repository<Cliente>,
+    @InjectRepository(Cliente)
+    private readonly clienteRepository: Repository<Cliente>,
   ) {}
 
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
@@ -35,7 +35,10 @@ export class ClientesService {
     });
   }
 
-  async update(id: string, updateClienteDto: UpdateClienteDto): Promise<Cliente> {
+  async update(
+    id: string,
+    updateClienteDto: UpdateClienteDto,
+  ): Promise<Cliente> {
     await this.clienteRepository.update(id, updateClienteDto);
     return this.clienteRepository.findOne({
       where: { id },

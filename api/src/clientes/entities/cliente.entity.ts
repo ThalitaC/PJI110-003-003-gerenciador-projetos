@@ -1,12 +1,46 @@
-import {Entity, PrimaryColumn} from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Projeto } from '../../projetos/entities/projeto.entity';
 
 @Entity('clientes')
 export class Cliente {
-    @PrimaryColumn()
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    nome: string;
-    email: string;
-    telefone: string;
-    cnpj: string;
+  @OneToMany(() => Projeto, (projeto) => projeto.cliente)
+  projetos: Projeto[];
+
+  @Column({ name: 'cliente_nome', type: 'varchar', nullable: false })
+  nome: string;
+
+  @Column({ name: 'cliente_email', type: 'varchar', nullable: true })
+  email: string;
+
+  @Column({ name: 'cliente_telefone', type: 'varchar', nullable: true })
+  telefone: string;
+
+  @Column({
+    name: 'cliente_cnpj',
+    type: 'varchar',
+    nullable: false,
+    unique: true,
+  })
+  cnpj: string;
+
+  @CreateDateColumn({ name: 'criado_em' })
+  criadoEm: string;
+
+  @UpdateDateColumn({ name: 'atualizado_em' })
+  atualizadoEm: string;
+
+  @DeleteDateColumn({ name: 'deletado_em' })
+  deletadoEm: string;
 }
