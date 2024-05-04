@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientesService } from './clientes.service';
-import { CreateClienteDto } from './dto/create-cliente.dto';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('ClientesService', () => {
   let clientesService: ClientesService;
@@ -14,58 +12,91 @@ describe('ClientesService', () => {
       providers: [
         ClientesService,
         {
-          provide: getRepositoryToken(Cliente),
+          provide: 'ClienteRepository',
           useClass: Repository,
         },
       ],
     }).compile();
 
     clientesService = module.get<ClientesService>(ClientesService);
-    clienteRepository = module.get<Repository<Cliente>>(getRepositoryToken(Cliente));
+    clienteRepository = module.get<Repository<Cliente>>('ClienteRepository');
   });
 
   describe('create', () => {
-    let createClienteDto: CreateClienteDto;
+    it('deve criar um novo cliente', async () => {
+      const createClienteDto = {
+        nome: 'Teste Cliente',
+        email: 'test@exemplo.com',
+        telefone: '123456789',
+        cnpj: '123456789',
+      };
 
-    beforeEach(() => {
-      createClienteDto = {
+      const savedCliente = {
         id: '1',
         nome: 'Teste Cliente',
-        email: 'teste@exemplo.com',
-        telefone: '1234567890',
-        cnpj: '12345678901234',
+        email: 'test@exemplo.com',
+        telefone: '123456789',
+        cnpj: '123456789',
+        projetos: [],
+        criadoEm: new Date().getDate().toString(),
+        atualizadoEm: null,
+        deletadoEm: null,
       };
-    });
 
-    it('deve criar um novo cliente com sucesso', async () => {
-      jest.spyOn(clienteRepository, 'findOne').mockResolvedValue(undefined);
-      jest.spyOn(clienteRepository, 'create').mockReturnValue(createClienteDto);
-      jest.spyOn(clienteRepository, 'save').mockResolvedValue(createClienteDto);
+      jest.spyOn(clienteRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(clienteRepository, 'create').mockReturnValueOnce(savedCliente);
+      jest.spyOn(clienteRepository, 'save').mockResolvedValueOnce(savedCliente);
 
-      expect(clienteRepository.create).not.toHaveBeenCalled();
-      expect(clienteRepository.save).not.toHaveBeenCalled();
+      const result = await clientesService.create(
+        createClienteDto.nome,
+        createClienteDto.email,
+        createClienteDto.telefone,
+        createClienteDto.cnpj,
+      );
 
-      const result = await clientesService.create(createClienteDto);
-
+      expect(result).toEqual(savedCliente);
+      expect(clienteRepository.findOne).toHaveBeenCalledWith({
+        where: { cnpj: '123456789' },
+      });
       expect(clienteRepository.create).toHaveBeenCalledWith(createClienteDto);
-      expect(clienteRepository.save).toHaveBeenCalledWith(createClienteDto);
-      expect(result).toEqual(createClienteDto);
+      expect(clienteRepository.save).toHaveBeenCalledWith(savedCliente);
     });
 
-    it('deve lançar um erro se um cliente com o mesmo CNPJ já existir', async () => {
-      const existingCliente = {
-        id: '2',
+    it('deve retornar um erro se o cnpj ja estiver em uso', async () => {
+      const createClienteDto = {
+        nome: 'Test Cliente',
+        email: 'test@exemplo.com',
+        telefone: '123456789',
+        cnpj: '123456789',
+      };
+
+      const clienteExistente = {
+        id: '1',
         nome: 'Cliente Existente',
         email: 'existente@exemplo.com',
-        telefone: '0987654321',
-        cnpj: '12345678901234',
+        telefone: '987654321',
+        cnpj: '123456789',
+        projetos: [],
+        criadoEm: new Date().getDate().toString(),
+        atualizadoEm: null,
+        deletadoEm: null,
       };
 
-      jest.spyOn(clienteRepository, 'findOne').mockResolvedValue(existingCliente);
+      jest
+        .spyOn(clienteRepository, 'findOne')
+        .mockResolvedValueOnce(clienteExistente);
 
-      await expect(clientesService.create(createClienteDto)).rejects.toThrow(
-          'CNPJ já cadastrado',
-      );
+      await expect(
+        clientesService.create(
+          createClienteDto.nome,
+          createClienteDto.email,
+          createClienteDto.telefone,
+          createClienteDto.cnpj,
+        ),
+      ).rejects.toThrow('CNPJ já cadastrado');
+      expect(clienteRepository.findOne).toHaveBeenCalledWith({
+        where: { cnpj: '123456789' },
+      });
     });
   });
 });

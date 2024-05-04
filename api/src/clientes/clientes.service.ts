@@ -2,27 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
-import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 
 @Injectable()
 export class ClientesService {
   constructor(
     @InjectRepository(Cliente)
-    private readonly clienteRepository: Repository<Cliente>,
+    private clienteRepository: Repository<Cliente>,
   ) {}
 
-  async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
+  async create(
+    nome: string,
+    email?: string,
+    telefone?: string,
+    cnpj?: string,
+  ): Promise<Cliente> {
     const clienteCadastrado = await this.clienteRepository.findOne({
-      where: { cnpj: createClienteDto.cnpj },
+      where: { cnpj },
     });
 
-    if (clienteCadastrado) {
+    if (clienteCadastrado && clienteCadastrado.cnpj != null) {
       throw new Error('CNPJ já cadastrado');
     }
 
-    const novoCliente = this.clienteRepository.create(createClienteDto);
-    return this.clienteRepository.save(novoCliente);
+    const novoCliente = this.clienteRepository.create({
+      nome,
+      email,
+      telefone,
+      cnpj,
+    });
+
+    return await this.clienteRepository.save(novoCliente);
   }
 
   async findAll(): Promise<Cliente[]> {

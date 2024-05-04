@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -30,7 +29,7 @@ export class Cliente {
   @Column({
     name: 'cliente_cnpj',
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     unique: true,
   })
   cnpj: string;
