@@ -17,11 +17,21 @@ export class ClientesService {
     telefone?: string,
     cnpj?: string,
   ): Promise<Cliente> {
+    if (!nome) {
+      throw new Error('Nome não pode ser vazio');
+    }
+
+    const cnpjContemApenasNumeros = /^\d+$/.test(cnpj || '');
+
+    if (cnpj && !cnpjContemApenasNumeros) {
+      throw new Error('CNPJ pode conter apenas números');
+    }
+
     const clienteCadastrado = await this.clienteRepository.findOne({
       where: { cnpj },
     });
 
-    if (clienteCadastrado && clienteCadastrado.cnpj != null) {
+    if (clienteCadastrado && clienteCadastrado.cnpj === cnpj) {
       throw new Error('CNPJ já cadastrado');
     }
 
@@ -32,7 +42,7 @@ export class ClientesService {
       cnpj,
     });
 
-    return await this.clienteRepository.save(novoCliente);
+    return this.clienteRepository.save(novoCliente);
   }
 
   async findAll(): Promise<Cliente[]> {
