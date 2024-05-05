@@ -2,9 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
-  Param,
   Delete,
   Query,
   Res,
@@ -90,12 +88,42 @@ export class ClientesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
-    return this.clientesService.update(id, updateClienteDto);
+  async update(
+    @Query() queryParams: UpdateClienteDto,
+    @Res() res?: Response,
+  ): Promise<Cliente> {
+    try {
+      const { id = '' } = queryParams;
+      const cliente = await this.clientesService.update({ id, ...queryParams });
+      res.status(200).json(cliente);
+      return cliente;
+    } catch (error) {
+      const errorMessages = {
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+        [ID_INVALIDO]: 400,
+        [NOME_VAZIO]: 400,
+        [CNPJ_EXISTENTE]: 409,
+        [CNPJ_NAO_NUMEROS]: 400,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientesService.remove(id);
+  async remove(@Query('id') id: string, @Res() res?: Response) {
+    try {
+      await this.clientesService.remove(id);
+      res.status(204).json();
+    } catch (error) {
+      const errorMessages = {
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+        [ID_INVALIDO]: 400,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
   }
 }
