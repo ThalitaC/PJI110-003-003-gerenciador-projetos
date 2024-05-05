@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { NOME_VAZIO, CNPJ_EXISTENTE, CNPJ_NAO_NUMEROS } from '../erros/erros';
+import { NOME_VAZIO, CNPJ_EXISTENTE, CNPJ_NAO_NUMEROS, NENHUM_CLIENTE_ENCONTRADO } from '../erros/erros';
 
 @Injectable()
 export class ClientesService {
@@ -47,7 +47,13 @@ export class ClientesService {
   }
 
   async findAll(): Promise<Cliente[]> {
-    return this.clienteRepository.find();
+    const clientes = await this.clienteRepository.find();
+
+    if (clientes.length === 0) {
+      throw new Error(NENHUM_CLIENTE_ENCONTRADO);
+    }
+
+    return clientes;
   }
 
   async findOne(id: string): Promise<Cliente> {

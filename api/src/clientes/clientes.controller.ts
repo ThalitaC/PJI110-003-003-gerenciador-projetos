@@ -14,6 +14,7 @@ import {
   CNPJ_EXISTENTE,
   CNPJ_NAO_NUMEROS,
   ERRO_CRIACAO,
+  NENHUM_CLIENTE_ENCONTRADO,
 } from '../erros/erros';
 import { Response } from 'express';
 import { ClientesService } from './clientes.service';
@@ -54,8 +55,19 @@ export class ClientesController {
   }
 
   @Get()
-  findAll() {
-    return this.clientesService.findAll();
+  async findAll(@Res() res?: Response) {
+    try {
+      const todosClientes = await this.clientesService.findAll();
+      res.status(201).json(todosClientes);
+      return todosClientes;
+    } catch (error) {
+      const errorMessages = {
+        [NENHUM_CLIENTE_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
   }
 
   @Get(':id')
