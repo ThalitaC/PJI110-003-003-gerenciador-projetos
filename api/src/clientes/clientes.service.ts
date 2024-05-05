@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { NOME_VAZIO, CNPJ_EXISTENTE, CNPJ_NAO_NUMEROS } from '../erros/erros';
 
 @Injectable()
 export class ClientesService {
@@ -18,21 +19,21 @@ export class ClientesService {
     cnpj?: string,
   ): Promise<Cliente> {
     if (!nome) {
-      throw new Error('Nome não pode ser vazio');
+      throw new Error(NOME_VAZIO);
     }
 
     const cnpjContemApenasNumeros = /^\d+$/.test(cnpj || '');
 
     if (cnpj && !cnpjContemApenasNumeros) {
-      throw new Error('CNPJ pode conter apenas números');
+      throw new Error(CNPJ_NAO_NUMEROS);
     }
 
     const clienteCadastrado = await this.clienteRepository.findOne({
       where: { cnpj },
     });
 
-    if (clienteCadastrado && clienteCadastrado.cnpj === cnpj) {
-      throw new Error('CNPJ já cadastrado');
+    if (clienteCadastrado && clienteCadastrado.cnpj !== null) {
+      throw new Error(CNPJ_EXISTENTE);
     }
 
     const novoCliente = this.clienteRepository.create({
