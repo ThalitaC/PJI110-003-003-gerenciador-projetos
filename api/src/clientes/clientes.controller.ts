@@ -15,6 +15,8 @@ import {
   CNPJ_NAO_NUMEROS,
   ERRO_CRIACAO,
   NENHUM_CLIENTE_ENCONTRADO,
+  CLIENTE_NAO_ENCONTRADO,
+  ID_INVALIDO,
 } from '../erros/erros';
 import { Response } from 'express';
 import { ClientesService } from './clientes.service';
@@ -71,8 +73,20 @@ export class ClientesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientesService.findOne(id);
+  async findOne(@Query('id') id: string, @Res() res?: Response) {
+    try {
+      const cliente = await this.clientesService.findOne(id);
+      res.status(200).json(cliente);
+      return cliente;
+    } catch (error) {
+      const errorMessages = {
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+        [ID_INVALIDO]: 400,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
   }
 
   @Patch(':id')

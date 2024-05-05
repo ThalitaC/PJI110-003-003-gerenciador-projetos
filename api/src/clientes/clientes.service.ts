@@ -3,7 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { NOME_VAZIO, CNPJ_EXISTENTE, CNPJ_NAO_NUMEROS, NENHUM_CLIENTE_ENCONTRADO } from '../erros/erros';
+import {
+  NOME_VAZIO,
+  CNPJ_EXISTENTE,
+  CNPJ_NAO_NUMEROS,
+  NENHUM_CLIENTE_ENCONTRADO,
+  CLIENTE_NAO_ENCONTRADO,
+  ID_INVALIDO,
+} from '../erros/erros';
 
 @Injectable()
 export class ClientesService {
@@ -57,9 +64,22 @@ export class ClientesService {
   }
 
   async findOne(id: string): Promise<Cliente> {
-    return this.clienteRepository.findOne({
+    const idUuid = id.match(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+
+    if (!idUuid) {
+      throw new Error(ID_INVALIDO);
+    }
+
+    const cliente = await this.clienteRepository.findOne({
       where: { id },
     });
+
+    if (!cliente) {
+      throw new Error(CLIENTE_NAO_ENCONTRADO);
+    }
+    return cliente;
   }
 
   async update(

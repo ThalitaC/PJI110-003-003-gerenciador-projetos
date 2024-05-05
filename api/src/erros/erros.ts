@@ -3,3 +3,5 @@ export const CNPJ_EXISTENTE = 'CNPJ já cadastrado.';
 export const CNPJ_NAO_NUMEROS = 'CNPJ deve conter apenas números.';
 export const ERRO_CRIACAO = 'Error ao criar cliente.';
 export const NENHUM_CLIENTE_ENCONTRADO = 'Nenhum cliente encontrado.';
+export const CLIENTE_NAO_ENCONTRADO = 'Cliente não encontrado.';
+export const ID_INVALIDO = 'ID inválido.';
