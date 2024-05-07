@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Projeto } from './entities/projeto.entity';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository, UpdateResult } from 'typeorm';
 import {
   CLIENTE_NAO_ENCONTRADO,
   CLIENTE_OBRIGATORIO,
@@ -12,6 +12,7 @@ import {
   PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
 import { ClientesService } from '../clientes/clientes.service';
+import { UpdateProjetoDto } from './dto/update-projeto.dto';
 
 @Injectable()
 export class ProjetosService {
@@ -57,6 +58,21 @@ export class ProjetosService {
     }
 
     return projeto;
+  }
+
+  async update(projeto: UpdateProjetoDto): Promise<Projeto> {
+    await this.validaNome(projeto.nome);
+
+    const projetoAtualizado = {
+      ...projeto,
+      ...(projeto.cliente && {
+        cliente: await this.clientesService.findOne(projeto.cliente),
+      }),
+    };
+
+    await this.projetoRepository.update({ id: projeto.id }, projetoAtualizado);
+
+    return await this.findOne(projeto.id);
   }
 
   private async validaNome(nome: string) {

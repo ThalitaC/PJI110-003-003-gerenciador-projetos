@@ -44,14 +44,14 @@ export class ClientesService {
     return await this.clienteRepository.findOne({ where: { id } });
   }
 
-  async update(data: {
+  async update(cliente: {
     id: string;
     nome?: string;
     email?: string;
     telefone?: string;
     cnpj?: string;
   }): Promise<Cliente> {
-    const { id, nome, email, telefone, cnpj } = data;
+    const { id, nome, email, telefone, cnpj } = cliente;
     await this.validaID(id);
     await this.validaClienteExiste(id);
     await this.validaNomeCNPJ(nome, cnpj);
