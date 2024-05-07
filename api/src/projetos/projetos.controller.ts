@@ -1,11 +1,19 @@
-import { Controller, Get, Patch, Post, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { ProjetosService } from './projetos.service';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { Response } from 'express';
 import { Projeto } from './entities/projeto.entity';
 import {
   CLIENTE_NAO_ENCONTRADO,
-  CLIENTE_OBRIGATORIO,
+  CLIENTE_VAZIO,
   ID_INVALIDO,
   NENHUM_PROJETO_ENCONTRADO,
   NOME_VAZIO,
@@ -28,7 +36,7 @@ export class ProjetosController {
     } catch (error) {
       const errorMessages = {
         [NOME_VAZIO]: 400,
-        [CLIENTE_OBRIGATORIO]: 400,
+        [CLIENTE_VAZIO]: 400,
         [ID_INVALIDO]: 400,
         [CLIENTE_NAO_ENCONTRADO]: 404,
       };
@@ -85,7 +93,23 @@ export class ProjetosController {
         [CLIENTE_NAO_ENCONTRADO]: 404,
         [ID_INVALIDO]: 400,
         [NOME_VAZIO]: 400,
-        [CLIENTE_OBRIGATORIO]: 400,
+        [CLIENTE_VAZIO]: 400,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
+  }
+
+  @Delete(':id')
+  async remove(@Query('id') id: string, @Res() res?: Response) {
+    try {
+      await this.projetosService.delete(id);
+      res.status(204).json();
+    } catch (error) {
+      const errorMessages = {
+        [PROJETO_NAO_ENCONTRADO]: 404,
+        [ID_INVALIDO]: 400,
       };
       const statusCode = errorMessages[error.message] || 500;
       res.status(statusCode).json({ error: error.message });

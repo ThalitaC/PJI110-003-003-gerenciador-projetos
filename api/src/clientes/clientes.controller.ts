@@ -108,7 +108,7 @@ export class ClientesController {
   @Delete(':id')
   async remove(@Query('id') id: string, @Res() res?: Response) {
     try {
-      await this.clientesService.remove(id);
+      await this.clientesService.delete(id);
       res.status(204).json();
     } catch (error) {
       const errorMessages = {

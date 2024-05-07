@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import {
   CLIENTE_NAO_ENCONTRADO,
-  CLIENTE_OBRIGATORIO,
+  CLIENTE_VAZIO,
   ID_INVALIDO,
   NENHUM_PROJETO_ENCONTRADO,
   NOME_VAZIO,
@@ -62,6 +62,9 @@ export class ProjetosService {
 
   async update(projeto: UpdateProjetoDto): Promise<Projeto> {
     await this.validaNome(projeto.nome);
+    if (projeto.cliente !== undefined) {
+      await this.validaCliente(projeto.cliente);
+    }
 
     const projetoAtualizado = {
       ...projeto,
@@ -75,6 +78,35 @@ export class ProjetosService {
     return await this.findOne(projeto.id);
   }
 
+  async delete(id: string) {
+    try {
+      await this.validaID(id);
+      await this.validaProjetoExiste(id);
+      await this.projetoRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async validaProjetoExiste(id: string) {
+    const cliente = await this.projetoRepository.findOne({
+      where: { id },
+    });
+    if (!cliente) {
+      throw new Error(PROJETO_NAO_ENCONTRADO);
+    }
+  }
+
+  private async validaID(id: string) {
+    const idUuid = id.match(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+
+    if (!idUuid) {
+      throw new Error(ID_INVALIDO);
+    }
+  }
+
   private async validaNome(nome: string) {
     if (!nome) {
       throw new Error(NOME_VAZIO);
@@ -83,7 +115,7 @@ export class ProjetosService {
 
   private async validaCliente(id: string) {
     if (!id) {
-      throw new Error(CLIENTE_OBRIGATORIO);
+      throw new Error(CLIENTE_VAZIO);
     }
 
     const idUuid = id.match(
