@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { Projeto } from './entities/projeto.entity';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
-import { UpdateProjetoDto } from './dto/update-projeto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, Repository } from 'typeorm';
+import {
+  CLIENTE_NAO_ENCONTRADO,
+  CLIENTE_OBRIGATORIO,
+  ID_INVALIDO,
+  NOME_VAZIO,
+} from '../erros/erros';
+import { ClientesService } from '../clientes/clientes.service';
 
 @Injectable()
 export class ProjetosService {
-  create(createProjetoDto: CreateProjetoDto) {
-    return 'This action adds a new projeto';
+  constructor(
+    @InjectRepository(Projeto) private projetoRepository: Repository<Projeto>,
+    private clientesService: ClientesService,
+  ) {}
+
+  async create(novoProjeto: CreateProjetoDto): Promise<Projeto> {
+    await this.validaNome(novoProjeto.nome);
+    await this.validaCliente(novoProjeto.cliente);
+
+    const projeto: DeepPartial<Projeto> = {
+      ...novoProjeto,
+      cliente: { id: novoProjeto.cliente },
+    };
+    return await this.projetoRepository.save(projeto);
   }
 
-  findAll() {
-    return `This action returns all projetos`;
+  private async validaNome(nome: string) {
+    if (!nome) {
+      throw new Error(NOME_VAZIO);
+    }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} projeto`;
-  }
+  private async validaCliente(id: string) {
+    if (!id) {
+      throw new Error(CLIENTE_OBRIGATORIO);
+    }
 
-  update(id: string, updateProjetoDto: UpdateProjetoDto) {
-    return `This action updates a #${id} projeto`;
-  }
+    const idUuid = id.match(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+    if (!idUuid) {
+      throw new Error(ID_INVALIDO);
+    }
 
-  remove(id: string) {
-    return `This action removes a #${id} projeto`;
+    const cliente = await this.clientesService.findOne(id);
+
+    if (!cliente) {
+      throw new Error(CLIENTE_NAO_ENCONTRADO);
+    }
   }
 }

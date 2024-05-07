@@ -10,6 +10,7 @@ import {
   NENHUM_CLIENTE_ENCONTRADO,
   NOME_VAZIO,
 } from '../erros/erros';
+import { CreateClienteDto } from './dto/create-cliente.dto';
 
 @Injectable()
 export class ClientesService {
@@ -18,22 +19,12 @@ export class ClientesService {
     private clienteRepository: Repository<Cliente>,
   ) {}
 
-  async create(
-    nome: string,
-    email?: string,
-    telefone?: string,
-    cnpj?: string,
-  ): Promise<Cliente> {
-    await this.validaNomeCNPJ(nome, cnpj);
+  async create(novoCliente: CreateClienteDto): Promise<Cliente> {
+    await this.validaNomeCNPJ(novoCliente.nome, novoCliente.cnpj);
 
-    const novoCliente = this.clienteRepository.create({
-      nome,
-      email,
-      telefone,
-      cnpj,
-    });
+    const cliente = this.clienteRepository.create(novoCliente);
 
-    return this.clienteRepository.save(novoCliente);
+    return await this.clienteRepository.save(cliente);
   }
 
   async findAll(): Promise<Cliente[]> {
