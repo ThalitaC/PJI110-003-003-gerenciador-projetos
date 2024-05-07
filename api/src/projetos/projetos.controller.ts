@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Query, Res } from '@nestjs/common';
 import { ProjetosService } from './projetos.service';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { Response } from 'express';
@@ -11,6 +11,7 @@ import {
   NOME_VAZIO,
   PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
+import { UpdateResult } from 'typeorm';
 
 @Controller('projetos')
 export class ProjetosController {
@@ -63,6 +64,29 @@ export class ProjetosController {
     } catch (error) {
       const errorMessages = {
         [PROJETO_NAO_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
+  }
+
+  @Patch(':id')
+  async update(
+    @Query() queryParams: CreateProjetoDto,
+    @Res() res?: Response,
+  ): Promise<Projeto> {
+    try {
+      const { id = '' } = queryParams;
+      const projeto = await this.projetosService.update({ id, ...queryParams });
+      res.status(200).json(projeto);
+      return projeto;
+    } catch (error) {
+      const errorMessages = {
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+        [ID_INVALIDO]: 400,
+        [NOME_VAZIO]: 400,
+        [CLIENTE_OBRIGATORIO]: 400,
       };
       const statusCode = errorMessages[error.message] || 500;
       res.status(statusCode).json({ error: error.message });
