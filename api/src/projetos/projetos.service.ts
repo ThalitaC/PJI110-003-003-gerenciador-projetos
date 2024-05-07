@@ -6,8 +6,10 @@ import { DeepPartial, Repository } from 'typeorm';
 import {
   CLIENTE_NAO_ENCONTRADO,
   CLIENTE_OBRIGATORIO,
-  ID_INVALIDO, NENHUM_PROJETO_ENCONTRADO,
+  ID_INVALIDO,
+  NENHUM_PROJETO_ENCONTRADO,
   NOME_VAZIO,
+  PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
 import { ClientesService } from '../clientes/clientes.service';
 
@@ -41,6 +43,20 @@ export class ProjetosService {
     }
 
     return projetos;
+  }
+
+  async findOne(id: string): Promise<Projeto> {
+    const projeto = await this.projetoRepository
+      .createQueryBuilder('projeto')
+      .leftJoinAndSelect('projeto.cliente', 'cliente')
+      .where('projeto.id = :id', { id })
+      .getOne();
+
+    if (!projeto) {
+      throw new Error(PROJETO_NAO_ENCONTRADO);
+    }
+
+    return projeto;
   }
 
   private async validaNome(nome: string) {
