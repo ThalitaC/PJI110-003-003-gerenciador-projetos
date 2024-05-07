@@ -66,13 +66,12 @@ export class ClientesService {
     });
   }
 
-  async remove(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
-      await this.validaClienteExiste(id);
       await this.validaID(id);
+      await this.validaClienteExiste(id);
       await this.clienteRepository.delete(id);
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
