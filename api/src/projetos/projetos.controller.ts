@@ -9,6 +9,7 @@ import {
   ID_INVALIDO,
   NENHUM_PROJETO_ENCONTRADO,
   NOME_VAZIO,
+  PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
 
 @Controller('projetos')
@@ -46,6 +47,22 @@ export class ProjetosController {
     } catch (error) {
       const errorMessages = {
         [NENHUM_PROJETO_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
+  }
+
+  @Get(':id')
+  async findOne(@Query('id') id: string, @Res() res?: Response) {
+    try {
+      const projeto = await this.projetosService.findOne(id);
+      res.status(200).json(projeto);
+      return projeto;
+    } catch (error) {
+      const errorMessages = {
+        [PROJETO_NAO_ENCONTRADO]: 404,
       };
       const statusCode = errorMessages[error.message] || 500;
       res.status(statusCode).json({ error: error.message });
