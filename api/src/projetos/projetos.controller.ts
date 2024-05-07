@@ -1,9 +1,15 @@
-import { Controller, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { ProjetosService } from './projetos.service';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { Response } from 'express';
 import { Projeto } from './entities/projeto.entity';
-import { CLIENTE_NAO_ENCONTRADO, CLIENTE_OBRIGATORIO, ID_INVALIDO, NOME_VAZIO } from '../erros/erros';
+import {
+  CLIENTE_NAO_ENCONTRADO,
+  CLIENTE_OBRIGATORIO,
+  ID_INVALIDO,
+  NENHUM_PROJETO_ENCONTRADO,
+  NOME_VAZIO,
+} from '../erros/erros';
 
 @Controller('projetos')
 export class ProjetosController {
@@ -24,6 +30,22 @@ export class ProjetosController {
         [CLIENTE_OBRIGATORIO]: 400,
         [ID_INVALIDO]: 400,
         [CLIENTE_NAO_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
+  }
+
+  @Get()
+  async findAll(@Res() res?: Response) {
+    try {
+      const todosProjetos = await this.projetosService.findAll();
+      res.status(201).json(todosProjetos);
+      return todosProjetos;
+    } catch (error) {
+      const errorMessages = {
+        [NENHUM_PROJETO_ENCONTRADO]: 404,
       };
       const statusCode = errorMessages[error.message] || 500;
       res.status(statusCode).json({ error: error.message });

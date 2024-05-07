@@ -7,3 +7,4 @@ export const CLIENTE_NAO_ENCONTRADO = 'Cliente não encontrado.';
 export const ID_INVALIDO = 'ID inválido.';
 
 export const CLIENTE_OBRIGATORIO = 'É obrigatório informar um cliente.';
+export const NENHUM_PROJETO_ENCONTRADO = 'Nenhum projeto encontrado.';
