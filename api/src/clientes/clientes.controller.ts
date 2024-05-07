@@ -32,13 +32,7 @@ export class ClientesController {
     @Res() res?: Response,
   ): Promise<Cliente> {
     try {
-      const { nome = '', email = '', telefone = '', cnpj = '' } = queryParams;
-      const novoCliente = await this.clientesService.create(
-        nome,
-        email || null,
-        telefone || null,
-        cnpj || null,
-      );
+      const novoCliente = await this.clientesService.create(queryParams);
       res.status(201).json(novoCliente);
       return novoCliente;
     } catch (error) {

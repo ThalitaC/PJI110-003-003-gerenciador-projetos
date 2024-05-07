@@ -1,34 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Query, Res } from '@nestjs/common';
 import { ProjetosService } from './projetos.service';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
-import { UpdateProjetoDto } from './dto/update-projeto.dto';
+import { Response } from 'express';
+import { Projeto } from './entities/projeto.entity';
+import { CLIENTE_NAO_ENCONTRADO, CLIENTE_OBRIGATORIO, ID_INVALIDO, NOME_VAZIO } from '../erros/erros';
 
 @Controller('projetos')
 export class ProjetosController {
   constructor(private readonly projetosService: ProjetosService) {}
 
   @Post()
-  create(@Body() createProjetoDto: CreateProjetoDto) {
-    return this.projetosService.create(createProjetoDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.projetosService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projetosService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjetoDto: UpdateProjetoDto) {
-    return this.projetosService.update(id, updateProjetoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projetosService.remove(id);
+  async create(
+    @Query() queryParams: CreateProjetoDto,
+    @Res() res?: Response,
+  ): Promise<Projeto> {
+    try {
+      const novoProjeto = await this.projetosService.create(queryParams);
+      res.status(201).json(novoProjeto);
+      return novoProjeto;
+    } catch (error) {
+      const errorMessages = {
+        [NOME_VAZIO]: 400,
+        [CLIENTE_OBRIGATORIO]: 400,
+        [ID_INVALIDO]: 400,
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
   }
 }

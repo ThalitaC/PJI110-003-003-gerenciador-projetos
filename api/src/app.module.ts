@@ -7,11 +7,16 @@ import { ClientesModule } from './clientes/clientes.module';
 import { ClientesController } from './clientes/clientes.controller';
 import { ClientesService } from './clientes/clientes.service';
 import { Cliente } from './clientes/entities/cliente.entity';
+import { Projeto } from './projetos/entities/projeto.entity';
+import { ProjetosModule } from './projetos/projetos.module';
+import { ProjetosController } from './projetos/projetos.controller';
+import { ProjetosService } from './projetos/projetos.service';
 
 @Module({
   imports: [
     ClientesModule,
-    TypeOrmModule.forFeature([Cliente]),
+    ProjetosModule,
+    TypeOrmModule.forFeature([Cliente, Projeto]),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -25,7 +30,7 @@ import { Cliente } from './clientes/entities/cliente.entity';
       // TODO: mudar atenticaçao do db para variaveis de ambiente para nao expor na aplicaçao
     }),
   ],
-  controllers: [AppController, ClientesController],
-  providers: [AppService, ClientesService],
+  controllers: [AppController, ClientesController, ProjetosController],
+  providers: [AppService, ClientesService, ProjetosService],
 })
 export class AppModule {}

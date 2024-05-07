@@ -34,6 +34,9 @@ export class Tarefa {
   @Column({ name: 'tarefa_duracao', type: 'interval', nullable: false })
   duracao: number;
 
+  @Column({ name: 'tarefa_descricao', type: 'varchar', nullable: true })
+  descricao: string;
+
   @Column({ name: 'tarefa_semana', type: 'integer', nullable: false })
   semana: number;
 

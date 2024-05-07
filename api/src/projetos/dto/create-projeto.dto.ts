@@ -1,6 +1,6 @@
 export class CreateProjetoDto {
-    id: string;
-    nome: string;
-    duracao: number;
-    clienteId: string;
+  id: string;
+  nome: string;
+  descricao: string;
+  cliente: string;
 }

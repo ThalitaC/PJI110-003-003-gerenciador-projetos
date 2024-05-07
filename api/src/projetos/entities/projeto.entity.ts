@@ -27,8 +27,11 @@ export class Projeto {
   @Column({ name: 'projeto_nome', type: 'varchar', nullable: false })
   nome: string;
 
-  @Column({ name: 'projeto_duracao', type: 'interval', nullable: false })
+  @Column({ name: 'projeto_duracao', type: 'interval', nullable: true })
   duracao: number;
+
+  @Column({ name: 'projeto_descricao', type: 'varchar', nullable: true })
+  descricao: string;
 
   @CreateDateColumn({ name: 'criado_em' })
   criadoEm: string;
