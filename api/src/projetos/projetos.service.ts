@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Projeto } from './entities/projeto.entity';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository, UpdateResult } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import {
   CLIENTE_NAO_ENCONTRADO,
   CLIENTE_OBRIGATORIO,

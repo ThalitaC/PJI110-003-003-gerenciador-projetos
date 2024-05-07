@@ -11,7 +11,6 @@ import {
   NOME_VAZIO,
   PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
-import { UpdateResult } from 'typeorm';
 
 @Controller('projetos')
 export class ProjetosController {
