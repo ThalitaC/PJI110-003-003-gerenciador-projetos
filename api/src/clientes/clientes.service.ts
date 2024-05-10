@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
@@ -11,12 +11,15 @@ import {
   NOME_VAZIO,
 } from '../erros/erros';
 import { CreateClienteDto } from './dto/create-cliente.dto';
+import { ProjetosService } from '../projetos/projetos.service';
 
 @Injectable()
 export class ClientesService {
   constructor(
     @InjectRepository(Cliente)
     private clienteRepository: Repository<Cliente>,
+    @Inject(forwardRef(() => ProjetosService))
+    private projetosService: ProjetosService,
   ) {}
 
   async create(novoCliente: CreateClienteDto): Promise<Cliente> {
@@ -68,10 +71,14 @@ export class ClientesService {
 
   async delete(id: string): Promise<void> {
     try {
-      // TODO: deltar todos os projetos atrelados ao cliente
-      // atualmente da erro
       await this.validaID(id);
       await this.validaClienteExiste(id);
+
+      const projetos = await this.projetosService.findAllByCliente(id);
+
+      for (const project of projetos) {
+        await this.projetosService.delete(project.id);
+      }
       await this.clienteRepository.delete(id);
     } catch (error) {
       throw error;

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClientesService } from './clientes.service';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
+import { CreateClienteDto } from './dto/create-cliente.dto';
 
 describe('ClientesService', () => {
   let clientesService: ClientesService;
@@ -48,10 +49,7 @@ describe('ClientesService', () => {
       jest.spyOn(clienteRepository, 'save').mockResolvedValueOnce(savedCliente);
 
       const result = await clientesService.create(
-        createClienteDto.nome,
-        createClienteDto.email,
-        createClienteDto.telefone,
-        createClienteDto.cnpj,
+        createClienteDto as CreateClienteDto,
       );
 
       expect(result).toEqual(savedCliente);
@@ -87,12 +85,7 @@ describe('ClientesService', () => {
         .mockResolvedValueOnce(clienteExistente);
 
       await expect(
-        clientesService.create(
-          createClienteDto.nome,
-          createClienteDto.email,
-          createClienteDto.telefone,
-          createClienteDto.cnpj,
-        ),
+        clientesService.create(createClienteDto as CreateClienteDto),
       ).rejects.toThrow('CNPJ já cadastrado');
       expect(clienteRepository.findOne).toHaveBeenCalledWith({
         where: { cnpj: '123456789' },
