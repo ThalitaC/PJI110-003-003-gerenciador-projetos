@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Projeto } from './entities/projeto.entity';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +18,7 @@ import { UpdateProjetoDto } from './dto/update-projeto.dto';
 export class ProjetosService {
   constructor(
     @InjectRepository(Projeto) private projetoRepository: Repository<Projeto>,
+    @Inject(forwardRef(() => ClientesService))
     private clientesService: ClientesService,
   ) {}
 
@@ -58,6 +59,25 @@ export class ProjetosService {
     }
 
     return projeto;
+  }
+
+  async findAllByCliente(id: string): Promise<Projeto[]> {
+    const cliente = await this.clientesService.findOne(id);
+    if (!cliente) {
+      throw new Error(CLIENTE_NAO_ENCONTRADO);
+    }
+
+    const projetos = await this.projetoRepository
+      .createQueryBuilder('projeto')
+      .leftJoinAndSelect('projeto.cliente', 'cliente')
+      .where('cliente.id = :id', { id })
+      .getMany();
+
+    if (projetos.length === 0) {
+      throw new Error(NENHUM_PROJETO_ENCONTRADO);
+    }
+
+    return projetos;
   }
 
   async update(projeto: UpdateProjetoDto): Promise<Projeto> {

@@ -81,6 +81,26 @@ export class ProjetosController {
     }
   }
 
+  @Get('cliente')
+  async findAllByCliente(
+    @Query('id') id: string,
+    @Res() res: Response,
+  ): Promise<Projeto[]> {
+    try {
+      const projetos = await this.projetosService.findAllByCliente(id);
+      res.status(200).json(projetos);
+      return projetos;
+    } catch (error) {
+      const errorMessages = {
+        [CLIENTE_NAO_ENCONTRADO]: 404,
+        [NENHUM_PROJETO_ENCONTRADO]: 404,
+      };
+      const statusCode = errorMessages[error.message] || 500;
+      res.status(statusCode).json({ error: error.message });
+      throw error;
+    }
+  }
+
   @Patch('/update')
   async update(
     @Query() queryParams: UpdateProjetoDto,
