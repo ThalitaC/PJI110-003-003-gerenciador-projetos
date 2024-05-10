@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientesModule } from './clientes/clientes.module';
 import { ClientesController } from './clientes/clientes.controller';
@@ -30,7 +28,7 @@ import { ProjetosService } from './projetos/projetos.service';
       // TODO: mudar atenticaçao do db para variaveis de ambiente para nao expor na aplicaçao
     }),
   ],
-  controllers: [AppController, ClientesController, ProjetosController],
-  providers: [AppService, ClientesService, ProjetosService],
+  controllers: [ClientesController, ProjetosController],
+  providers: [ClientesService, ProjetosService],
 })
 export class AppModule {}
