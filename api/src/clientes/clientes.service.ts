@@ -68,6 +68,8 @@ export class ClientesService {
 
   async delete(id: string): Promise<void> {
     try {
+      // TODO: deltar todos os projetos atrelados ao cliente
+      // atualmente da erro
       await this.validaID(id);
       await this.validaClienteExiste(id);
       await this.clienteRepository.delete(id);
@@ -106,12 +108,13 @@ export class ClientesService {
       throw new Error(CNPJ_NAO_NUMEROS);
     }
 
-    const clienteCadastrado = await this.clienteRepository.findOne({
-      where: { cnpj },
-    });
-
-    if (clienteCadastrado && clienteCadastrado.cnpj !== null) {
-      throw new Error(CNPJ_EXISTENTE);
+    if (cnpj !== undefined) {
+      const clienteCadastrado = await this.clienteRepository.findOne({
+        where: { cnpj },
+      });
+      if (clienteCadastrado) {
+        throw new Error(CNPJ_EXISTENTE);
+      }
     }
   }
 }
