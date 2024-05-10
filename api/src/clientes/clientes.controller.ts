@@ -21,7 +21,9 @@ import { ClientesService } from './clientes.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Cliente } from './entities/cliente.entity';
 import { CreateClienteDto } from './dto/create-cliente.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('clientes')
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
@@ -64,7 +66,7 @@ export class ClientesController {
     }
   }
 
-  @Get(':id')
+  @Get()
   async findOne(@Query('id') id: string, @Res() res?: Response) {
     try {
       const cliente = await this.clientesService.findOne(id);
@@ -81,7 +83,7 @@ export class ClientesController {
     }
   }
 
-  @Patch(':id')
+  @Patch('/update')
   async update(
     @Query() queryParams: UpdateClienteDto,
     @Res() res?: Response,
@@ -105,7 +107,7 @@ export class ClientesController {
     }
   }
 
-  @Delete(':id')
+  @Delete('/delete')
   async remove(@Query('id') id: string, @Res() res?: Response) {
     try {
       await this.clientesService.delete(id);

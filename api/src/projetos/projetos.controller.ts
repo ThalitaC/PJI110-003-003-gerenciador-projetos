@@ -19,8 +19,11 @@ import {
   NOME_VAZIO,
   PROJETO_NAO_ENCONTRADO,
 } from '../erros/erros';
+import { ApiTags } from '@nestjs/swagger';
+import { UpdateProjetoDto } from './dto/update-projeto.dto';
 
 @Controller('projetos')
+@ApiTags('projetos')
 export class ProjetosController {
   constructor(private readonly projetosService: ProjetosService) {}
 
@@ -62,7 +65,7 @@ export class ProjetosController {
     }
   }
 
-  @Get(':id')
+  @Get()
   async findOne(@Query('id') id: string, @Res() res?: Response) {
     try {
       const projeto = await this.projetosService.findOne(id);
@@ -78,9 +81,9 @@ export class ProjetosController {
     }
   }
 
-  @Patch(':id')
+  @Patch('/update')
   async update(
-    @Query() queryParams: CreateProjetoDto,
+    @Query() queryParams: UpdateProjetoDto,
     @Res() res?: Response,
   ): Promise<Projeto> {
     try {
@@ -101,7 +104,7 @@ export class ProjetosController {
     }
   }
 
-  @Delete(':id')
+  @Delete('/delete')
   async remove(@Query('id') id: string, @Res() res?: Response) {
     try {
       await this.projetosService.delete(id);
