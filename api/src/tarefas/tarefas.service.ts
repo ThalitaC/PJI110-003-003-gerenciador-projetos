@@ -1,30 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Tarefa } from './entities/tarefa.entity';
+import { DeepPartial, Repository } from 'typeorm';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
-import { UpdateTarefaDto } from './dto/update-tarefa.dto';
+import { ProjetosService } from '../projetos/projetos.service';
 
 @Injectable()
 export class TarefasService {
-  create(createTarefaDto: CreateTarefaDto) {
-    return 'This action adds a new tarefa';
-  }
+  constructor(
+    @InjectRepository(Tarefa)
+    private tarefaRepository: Repository<Tarefa>,
+    @Inject(forwardRef(() => ProjetosService))
+    private projetosService: ProjetosService,
+  ) {}
 
-  findAll() {
-    return `This action returns all tarefas`;
-  }
+  async create(novaTarefa: CreateTarefaDto): Promise<Tarefa> {
+    const tarefa: DeepPartial<Tarefa> = {
+      ...novaTarefa,
+      projeto: await this.projetosService.findOne(novaTarefa.projetoId),
+    };
 
-  findOne(id: string) {
-    return `This action returns a #${id} tarefa`;
-  }
-
-  findAllByProjetoId(projetoId: string) {
-    return `This action returns all tarefas by projetoId ${projetoId}`;
-  }
-
-  update(id: string, updateTarefaDto: UpdateTarefaDto) {
-    return `This action updates a #${id} tarefa`;
-  }
-
-  remove(id: string) {
-    return `This action removes a #${id} tarefa`;
+    const savedTarefa = await this.tarefaRepository.save(tarefa);
+    return savedTarefa;
   }
 }

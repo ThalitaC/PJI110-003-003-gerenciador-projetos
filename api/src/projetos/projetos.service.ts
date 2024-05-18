@@ -13,6 +13,7 @@ import {
 } from '../erros/erros';
 import { ClientesService } from '../clientes/clientes.service';
 import { UpdateProjetoDto } from './dto/update-projeto.dto';
+import { TarefasService } from '../tarefas/tarefas.service';
 
 @Injectable()
 export class ProjetosService {
