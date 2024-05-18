@@ -31,13 +31,13 @@ export class Tarefa {
   @Column({ name: 'tarefa_nome', type: 'varchar', nullable: false })
   nome: string;
 
-  @Column({ name: 'tarefa_duracao', type: 'interval', nullable: false })
+  @Column({ name: 'tarefa_duracao', type: 'interval', nullable: true })
   duracao: number;
 
   @Column({ name: 'tarefa_descricao', type: 'varchar', nullable: true })
   descricao: string;
 
-  @Column({ name: 'tarefa_semana', type: 'integer', nullable: false })
+  @Column({ name: 'tarefa_semana', type: 'integer', nullable: true })
   semana: number;
 
   @CreateDateColumn({ name: 'criado_em' })
