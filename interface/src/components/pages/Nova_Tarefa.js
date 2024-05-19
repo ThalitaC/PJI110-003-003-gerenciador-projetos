@@ -1,11 +1,13 @@
-import Novo_ProjetoForms from "../Novo_Projeto/Novo_ProjetoForms"
+import Nova_TarefaForms from "../Nova_Tarefa/Nova_TarefaForms"
+import styles from './Nova_Tarefa.module.css'
+
 
 function Nova_Tarefa(){
     return (
-        <div>
+        <div className = {styles.Nova_Tarefa_container}>
             <h1>Nova Tarefa</h1>
-            <p>Insira abaixo as inforações para criar uma tarefa, e você consiga gerir seus trabalhos:</p>
-            <Novo_ProjetoForms />
+            <p>Coloque os dados do seu Cliente se não houver no banco de dados:</p>
+            <Nova_TarefaForms btnText="Criar Tarefa" />
 
         </div>
     )

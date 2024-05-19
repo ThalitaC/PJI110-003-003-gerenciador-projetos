@@ -1,11 +1,13 @@
-import Novo_ProjetoForms from "../Novo_Projeto/Novo_ProjetoForms"
+import Novo_ClienteForms from "../Novo_Cliente/Novo_ClienteForms"
+import styles from './Novo_Cliente.module.css'
+
 
 function Novo_Cliente(){
     return (
-        <div>
+        <div className = {styles.Novo_Cliente_container}>
             <h1>Novo Cliente</h1>
-            <p>Se o cliente não existe no banco de dados, insira abaixo as inforações para criar um cadastro do novo cliente:</p>
-            <Novo_ProjetoForms />
+            <p>Coloque os dados do seu Cliente se não houver no banco de dados:</p>
+            <Novo_ClienteForms btnText="Criar Cliente" />
 
         </div>
     )
