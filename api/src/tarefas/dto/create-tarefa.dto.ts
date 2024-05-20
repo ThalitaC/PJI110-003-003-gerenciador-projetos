@@ -12,6 +12,9 @@ export class CreateTarefaDto {
   @ApiProperty({ required: false })
   descricao: string;
 
+  @ApiProperty({ required: false })
+  semana: number
+
   @ApiProperty()
   projetoId: string;
 }
