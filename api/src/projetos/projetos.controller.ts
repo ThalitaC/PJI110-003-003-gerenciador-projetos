@@ -81,7 +81,7 @@ export class ProjetosController {
     }
   }
 
-  @Get('cliente')
+  @Get('clientes')
   async findAllByCliente(
     @Query('id') id: string,
     @Res() res: Response,

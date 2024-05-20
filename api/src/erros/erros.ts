@@ -9,3 +9,5 @@ export const ID_INVALIDO = 'ID inválido.';
 export const NENHUM_PROJETO_ENCONTRADO = 'Nenhum projeto encontrado.';
 export const PROJETO_NAO_ENCONTRADO = 'Projeto não encontrado.';
 export const CLIENTE_VAZIO = 'Cliente não pode ser vazio.';
+
+export const NENHUMA_TAREFA_ENCONTRADA = 'Nenhuma tarefa encontrada.';

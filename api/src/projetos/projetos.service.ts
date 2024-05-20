@@ -13,7 +13,6 @@ import {
 } from '../erros/erros';
 import { ClientesService } from '../clientes/clientes.service';
 import { UpdateProjetoDto } from './dto/update-projeto.dto';
-import { TarefasService } from '../tarefas/tarefas.service';
 
 @Injectable()
 export class ProjetosService {
@@ -82,7 +81,9 @@ export class ProjetosService {
   }
 
   async update(projeto: UpdateProjetoDto): Promise<Projeto> {
-    await this.validaNome(projeto.nome);
+    if (projeto.nome !== undefined) {
+      await this.validaNome(projeto.nome);
+    }
     if (projeto.cliente !== undefined) {
       await this.validaCliente(projeto.cliente);
     }
@@ -109,7 +110,7 @@ export class ProjetosService {
     }
   }
 
-  private async validaProjetoExiste(id: string) {
+  public async validaProjetoExiste(id: string) {
     const cliente = await this.projetoRepository.findOne({
       where: { id },
     });
@@ -118,7 +119,7 @@ export class ProjetosService {
     }
   }
 
-  private async validaID(id: string) {
+  public async validaID(id: string) {
     const idUuid = id.match(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
     );
