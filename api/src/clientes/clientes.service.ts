@@ -23,6 +23,9 @@ export class ClientesService {
   ) {}
 
   async create(novoCliente: CreateClienteDto): Promise<Cliente> {
+    if (novoCliente.cnpj == '') {
+      novoCliente.cnpj = undefined;
+    }
     await this.validaNomeCNPJ(novoCliente.nome, novoCliente.cnpj);
 
     const cliente = this.clienteRepository.create(novoCliente);
