@@ -37,7 +37,7 @@ export class Tarefa {
   @Column({ name: 'tarefa_descricao', type: 'varchar', nullable: true })
   descricao: string;
 
-  @Column({ name: 'tarefa_semana', type: 'integer', nullable: true })
+  @Column({ name: 'tarefa_semana', type: 'varchar', nullable: true })
   semana: string;
 
   @CreateDateColumn({ name: 'criado_em' })
