@@ -13,16 +13,33 @@
 
 .item {
   margin-right: 1em;
-}
-
-.item a {
   color: #ffffff;
   text-decoration: none;
   font-weight: bold;
 }
 
-.item a:hover {
+.item:hover {
   color: #ffbb33;
   text-decoration: none;
-  
+  cursor: pointer;
+}
+
+.item a {
+  margin-right: 1em;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.modal {
+  position: absolute;
+  width: 50%;
+  height: 80%;
+  inset: 40px;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(229, 11, 11);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
 }

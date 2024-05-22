@@ -4,7 +4,12 @@ import { Tarefa } from './entities/tarefa.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
 import { ProjetosService } from '../projetos/projetos.service';
-import { ID_INVALIDO, NENHUMA_TAREFA_ENCONTRADA, NOME_VAZIO, PROJETO_NAO_ENCONTRADO } from '../erros/erros';
+import {
+  ID_INVALIDO,
+  NENHUMA_TAREFA_ENCONTRADA,
+  NOME_VAZIO,
+  PROJETO_NAO_ENCONTRADO,
+} from '../erros/erros';
 import { UpdateTarefaDto } from './dto/update-tarefa.dto';
 
 @Injectable()
