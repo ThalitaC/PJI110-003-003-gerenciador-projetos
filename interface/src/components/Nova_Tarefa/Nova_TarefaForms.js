@@ -8,6 +8,7 @@ function Nova_TarefaForms({ btnText }) {
   const [startDate, setStartDate] = useState(null);
   const [projetos, setProjetos] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
+  const [semana, setSemana] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:3000/projetos')
@@ -17,8 +18,9 @@ function Nova_TarefaForms({ btnText }) {
   }, []);
 
   const handleWeekChange = (week) => {
-    const start = moment().isoWeek(week).startOf('week');
-    setStartDate(start);
+    const start = moment(week).startOf('week');
+    const end = moment(week).endOf('week');
+    setSemana(`${start.format('DD/MM/YY')} - ${end.format('DD/MM/YY')}`);
   };
 
   const handleSubmit = async (event) => {
@@ -31,6 +33,7 @@ function Nova_TarefaForms({ btnText }) {
     for (const [key, value] of formData.entries()) {
       params.append(key, value);
     }
+    params.append('semana', semana);
 
     try {
       const response = await axios.post(`http://localhost:3000/tarefas?${params.toString()}`);
