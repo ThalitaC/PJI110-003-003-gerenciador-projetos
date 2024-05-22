@@ -16,7 +16,7 @@ export class UpdateTarefaDto extends PartialType(CreateTarefaDto) {
   descricao: string;
 
   @ApiProperty({ required: false })
-  semana: number;
+  semana: string;
 
   @ApiProperty({ required: false })
   projetoId: string;

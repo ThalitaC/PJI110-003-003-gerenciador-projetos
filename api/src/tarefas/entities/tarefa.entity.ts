@@ -38,7 +38,7 @@ export class Tarefa {
   descricao: string;
 
   @Column({ name: 'tarefa_semana', type: 'integer', nullable: true })
-  semana: number;
+  semana: string;
 
   @CreateDateColumn({ name: 'criado_em' })
   criadoEm: string;
